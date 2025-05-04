@@ -1,6 +1,6 @@
 # Mark Interview
 
-## Prerequisite
+## Prerequisites
 
 > Install and Run Ollama locally
 

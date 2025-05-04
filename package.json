@@ -11,13 +11,16 @@
     "prepare": "husky"
   },
   "dependencies": {
+    "@ai-sdk/react": "^1.2.11",
+    "@hono/node-server": "^1.14.1",
     "@radix-ui/react-slot": "^1.2.0",
-    "ai": "^2.2.16",
+    "ai": "^4.3.13",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
-    "langchain": "^0.0.129",
+    "hono": "^4.7.8",
     "lucide-react": "^0.507.0",
     "next": "15.3.1",
+    "ollama-ai-provider": "^1.2.0",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "tailwind-merge": "^3.2.0",

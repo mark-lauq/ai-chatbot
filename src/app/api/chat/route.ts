@@ -1,29 +1,21 @@
-import { StreamingTextResponse, Message } from "ai";
-import { AIMessage, HumanMessage } from "langchain/schema";
-import { ChatOllama } from "langchain/chat_models/ollama";
-import { BytesOutputParser } from "langchain/schema/output_parser";
+import { streamText, UIMessage } from "ai";
+import { createOllama } from "ollama-ai-provider";
 
-export const runtime = "edge";
+// Allow streaming responses up to 30 seconds
+export const maxDuration = 30;
+
+const ollama = createOllama({
+  baseURL: process.env.OLLAMA_BASE_URL,
+});
 
 export async function POST(req: Request) {
-  const { messages } = await req.json();
+  const { messages }: { messages: UIMessage[] } = await req.json();
 
-  const model = new ChatOllama({
-    baseUrl: process.env.OLLAMA_BASE_URL,
-    model: process.env.MODEL,
+  const result = streamText({
+    model: ollama(process.env.MODEL || "phi:latest"),
+    system: "You are a helpful assistant.",
+    messages,
   });
 
-  const parser = new BytesOutputParser();
-
-  const stream = await model
-    .pipe(parser)
-    .stream(
-      (messages as Message[]).map((m) =>
-        m.role == "user"
-          ? new HumanMessage(m.content)
-          : new AIMessage(m.content),
-      ),
-    );
-
-  return new StreamingTextResponse(stream);
+  return result.toDataStreamResponse();
 }
