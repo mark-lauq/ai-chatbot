@@ -1,4 +1,4 @@
-# Mark Interview
+# AI Chatbot
 
 ## Prerequisites
 
