@@ -1,11 +1,24 @@
-import { Button } from "@/components/ui/button";
+"use client";
+
+import { useChat } from "ai/react";
+import { Messages } from "@/components/messages";
+import { Chat } from "@/components/chat";
 
 export default function Home() {
+  const { messages, input, handleInputChange, handleSubmit } = useChat();
+
   return (
-    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      <main className="flex flex-col gap-[32px] row-start-2 items-center sm:items-start">
-        <Button>Mark Interview</Button>
-      </main>
+    <div className="w-[640px] h-[100vh] m-auto py-8 flex flex-col items-center justify-between">
+      <div className="w-full h-[80vh] mb-5 overflow-auto">
+        <Messages messages={messages} />
+      </div>
+      <div className="w-full h-[20vh]">
+        <Chat
+          value={input}
+          handleInputChange={handleInputChange}
+          handleSubmit={handleSubmit}
+        />
+      </div>
     </div>
   );
 }
