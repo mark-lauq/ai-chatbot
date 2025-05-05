@@ -28,6 +28,8 @@ function PureChat({
       role: "user",
       content: value,
     });
+    // reset input value
+    setInput("");
   };
 
   const loading = useMemo(
