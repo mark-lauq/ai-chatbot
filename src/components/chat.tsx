@@ -24,6 +24,10 @@ function PureChat({
   };
 
   const handleAppend = () => {
+    if (!value) {
+      return;
+    }
+
     append({
       role: "user",
       content: value,
