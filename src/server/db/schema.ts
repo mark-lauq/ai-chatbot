@@ -1,14 +1,17 @@
 import { sql } from "drizzle-orm";
 import { sqliteTable, text } from "drizzle-orm/sqlite-core";
 import { createId } from "@paralleldrive/cuid2";
+import type { Message as MessageType } from "ai";
 
-enum Role {
+export enum Role {
   User = "user",
-  AI = "ai",
+  Assistant = "assistant",
 }
 
 export const chatTable = sqliteTable("chat", {
-  id: text().$defaultFn(() => createId()),
+  id: text()
+    .$defaultFn(() => createId())
+    .notNull(),
   createdAt: text()
     .notNull()
     .default(sql`CURRENT_TIMESTAMP`),
@@ -19,13 +22,13 @@ export type Chat = typeof chatTable.$inferSelect;
 export type InsertChat = typeof chatTable.$inferInsert;
 
 export const messageTable = sqliteTable("message", {
-  id: text().$defaultFn(() => createId()),
-  chatId: text().references(() => chatTable.id),
-  role: text({ enum: [Role.User, Role.AI] }),
-  parts: text({ mode: "json" }).$type<{
-    type: "text";
-    text: string;
-  }>(),
+  id: text()
+    .$defaultFn(() => createId())
+    .notNull(),
+  role: text({ enum: [Role.User, Role.Assistant] })
+    .$type<MessageType["role"]>()
+    .notNull(),
+  content: text().notNull(),
 });
 
 export type Message = typeof messageTable.$inferSelect;
