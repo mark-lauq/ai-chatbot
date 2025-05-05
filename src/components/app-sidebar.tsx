@@ -1,4 +1,6 @@
-import { memo } from "react";
+"use client";
+
+import { memo, useEffect, useState } from "react";
 import {
   Sidebar,
   SidebarHeader,
@@ -10,34 +12,48 @@ import {
   SidebarMenuItem,
   SidebarMenuButton,
 } from "@/components/ui/sidebar";
-
-// Menu items.
-const items = [
-  {
-    title: "History 1",
-    url: "#",
-  },
-];
+import { client } from "@/lib/api-client";
+import type { Chat } from "@/server/db/schema";
 
 function PureAppSidebar() {
+  const [chats, setChats] = useState<Chat[]>();
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const data = await (await client.api.chat.$get()).json();
+
+        setChats(data);
+      } catch (error) {
+        console.error(error);
+      }
+    };
+    fetchData();
+  }, []);
+
   return (
     <Sidebar className="border-r-gray-200">
       <SidebarHeader className="font-bold">Chat History</SidebarHeader>
       <SidebarContent>
-        <SidebarGroup>
-          <SidebarGroupLabel>Today</SidebarGroupLabel>
-          <SidebarGroupContent>
-            <SidebarMenu>
-              {items.map((item) => (
-                <SidebarMenuItem key={item.title}>
-                  <SidebarMenuButton asChild>
-                    <a href={item.url}>{item.title}</a>
-                  </SidebarMenuButton>
-                </SidebarMenuItem>
-              ))}
-            </SidebarMenu>
-          </SidebarGroupContent>
-        </SidebarGroup>
+        {!chats ? (
+          <SidebarGroup>
+            <SidebarGroupLabel>Loading...</SidebarGroupLabel>
+          </SidebarGroup>
+        ) : (
+          <SidebarGroup>
+            <SidebarGroupContent>
+              <SidebarMenu>
+                {chats.map((chat) => (
+                  <SidebarMenuItem key={chat.title}>
+                    <SidebarMenuButton asChild>
+                      <a href={chat.id!}>{chat.title}</a>
+                    </SidebarMenuButton>
+                  </SidebarMenuItem>
+                ))}
+              </SidebarMenu>
+            </SidebarGroupContent>
+          </SidebarGroup>
+        )}
       </SidebarContent>
     </Sidebar>
   );
