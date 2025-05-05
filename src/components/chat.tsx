@@ -1,6 +1,7 @@
 import { memo, useMemo } from "react";
 import type { ChangeEvent, Dispatch, SetStateAction } from "react";
 import type { Message, CreateMessage } from "@ai-sdk/react";
+import { client } from "@/lib/api-client";
 import { Button } from "./ui/button";
 import { Textarea } from "./ui/textarea";
 
@@ -23,17 +24,29 @@ function PureChat({
     setInput(e.target.value);
   };
 
-  const handleAppend = () => {
+  const handleAppend = async () => {
     if (!value) {
       return;
     }
 
-    append({
-      role: "user",
+    const body = {
+      role: "user" as const,
       content: value,
-    });
-    // reset input value
-    setInput("");
+    };
+
+    try {
+      // Save to DB
+      const res = await client.api.message.$post({ form: body });
+      if (!res.ok) {
+        return;
+      }
+      // Chat to AI
+      append(body);
+      // Reset input value
+      setInput("");
+    } catch (error) {
+      console.error(error);
+    }
   };
 
   const loading = useMemo(

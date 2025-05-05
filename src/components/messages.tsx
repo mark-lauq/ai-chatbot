@@ -1,6 +1,7 @@
 import type { Message } from "ai";
 import { memo } from "react";
 import clsx from "clsx";
+import { Role } from "@/server/db/schema";
 
 function PureMessages({ messages }: { messages: Message[] }) {
   return messages.length > 0
@@ -12,13 +13,8 @@ function PureMessages({ messages }: { messages: Message[] }) {
             "text-right": msg.role === "user",
           })}
         >
-          <b>{msg.role === "user" ? "User: " : "AI: "}</b>
-          {msg.parts?.map((part, index) => {
-            // text parts:
-            if (part.type === "text") {
-              return <div key={index}>{part.text}</div>;
-            }
-          })}
+          <b>{msg.role === Role.User ? "User: " : "AI: "}</b>
+          {msg.content}
         </div>
       ))
     : "Empty chat messages :(";
